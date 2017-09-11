@@ -100,7 +100,7 @@ public class BroadcastListener implements LifecycleObserver {
                 return intentFilter;
             }
         } catch (Exception e) {
-            Log.e(TAG, "BaseActivity.getLocalIntentFilter:" + e.getMessage());
+            Log.e(TAG, "EActivity.getLocalIntentFilter:" + e.getMessage());
         }
 
         return null;
@@ -118,7 +118,7 @@ public class BroadcastListener implements LifecycleObserver {
                 return intentFilter;
             }
         } catch (Exception e) {
-            Log.e(TAG, "BaseActivity.getPublicIntentFilter:" + e.getMessage());
+            Log.e(TAG, "EActivity.getPublicIntentFilter:" + e.getMessage());
         }
         return null;
     }
@@ -146,7 +146,7 @@ public class BroadcastListener implements LifecycleObserver {
             if (publicIntentFilters != null)
                 context.unregisterReceiver(publicReceiver);
         } catch (Exception e) {
-            Log.e(TAG, "BaseActivity.onDestroy:" + e.getMessage());
+            Log.e(TAG, "EActivity.onDestroy:" + e.getMessage());
         }
     }
 }
