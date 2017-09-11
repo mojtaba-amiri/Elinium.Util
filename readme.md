@@ -10,7 +10,9 @@ This is useful when you want to register broadcast receiver for different action
  
   You have the option to specify the scope (is it local broadcast or public).
   
-  You can use this annotation in every class that implements LifecycleOwner interface (Activity, Fragment, etc.). to initialize this, you have to do BroadcastListener.initialize(this) on create event. 
+  You can use this annotation in every class that implements LifecycleOwner interface (Activity, Fragment, etc.). to initialize this, you have to do 
+ > BroadcastListener.initialize(this) 
+ on onCreate event. 
   
 - ## RecyclerView but easier: Add items and not more!
 RecyclerAdapter and BaseItem which makes inserting different types of items into RecyclerView. For every item you should extend the BaseItem class like this:
