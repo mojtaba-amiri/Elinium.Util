@@ -4,10 +4,10 @@ This is one small project to put some useful classes and tools and share it with
 - ## Get rid of register/unregister receivers. Use @OnBroadcastReceived 
 This is useful when you want to register broadcast receiver for different actions. For instance if you want to do something when bluetooth state changes, you just need to set annotation for the function:
   
-  @OnBroadcastReceived(actionName=BluetoothAdapter.ACTION_STATE_CHANGED)
-  public void doSomething(){
-  
-  }
+ > @OnBroadcastReceived(actionName=BluetoothAdapter.ACTION_STATE_CHANGED)
+ > public void doSomething(){
+ > }
+ 
   You have the option to specify the scope (is it local broadcast or public).
   
   You can use this annotation in every class that implements LifecycleOwner interface (Activity, Fragment, etc.). to initialize this, you have to do BroadcastListener.initialize(this) on create event. 
@@ -16,7 +16,7 @@ This is useful when you want to register broadcast receiver for different action
 RecyclerAdapter and BaseItem which makes inserting different types of items into RecyclerView. For every item you should extend the BaseItem class like this:
 
 
-  public class SampleItem extends BaseItem<BaseViewHolder> 
+  > public class SampleItem extends BaseItem<BaseViewHolder> 
  
  good point is you don't need to define ViewHolders. demo app has an example on how to use it and how easy it is. 
  
