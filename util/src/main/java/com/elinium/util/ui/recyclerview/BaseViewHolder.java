@@ -15,7 +15,6 @@ import java.util.Map;
  */
 
 public class BaseViewHolder extends RecyclerView.ViewHolder {
-  private View.OnClickListener onClickListener;
   private Map<Integer, View> views = new ArrayMap<>();
 
   BaseViewHolder(View itemView) {
