@@ -14,6 +14,8 @@ This is useful when you want to register broadcast receiver for different action
   
 - ## RecyclerView but easier: Add items and not more!
 RecyclerAdapter and BaseItem which makes inserting different types of items into RecyclerView. For every item you should extend the BaseItem class like this:
+
+
   public class SampleItem extends BaseItem<BaseViewHolder> 
  
  good point is you don't need to define ViewHolders. demo app has an example on how to use it and how easy it is. 
