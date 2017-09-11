@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Elinium.Util.iml" filepath="$PROJECT_DIR$/Elinium.Util.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Elinium.iml" filepath="$PROJECT_DIR$/Elinium.iml" />
+      <module fileurl="file://C:\Users\mojtabaa\AndroidStudioProjects\Elinium\Elinium.Util.iml" filepath="C:\Users\mojtabaa\AndroidStudioProjects\Elinium\Elinium.Util.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\mojtabaa\AndroidStudioProjects\Elinium\app\app.iml" filepath="C:\Users\mojtabaa\AndroidStudioProjects\Elinium\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/util/util.iml" filepath="$PROJECT_DIR$/util/util.iml" />
+      <module fileurl="file://C:\Users\mojtabaa\AndroidStudioProjects\Elinium\util\util.iml" filepath="C:\Users\mojtabaa\AndroidStudioProjects\Elinium\util\util.iml" />
     </modules>
   </component>
 </project>
