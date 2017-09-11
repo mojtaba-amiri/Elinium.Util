@@ -22,7 +22,7 @@ RecyclerAdapter and BaseItem which makes inserting different types of items into
 
   > public class SampleItem extends BaseItem<BaseViewHolder> 
  
- good point is you don't need to define ViewHolders. demo app has an example on how to use it and how easy it is. 
+ good point is you don't need to define ViewHolders. demo app has an example on how to use it. 
  
 - ## Handling uncaught exceptions
 ExceptionHandler is useful to handle all exceptions that are not caught by try/catch. It could be used in classes that implement LifecycleOwner.
