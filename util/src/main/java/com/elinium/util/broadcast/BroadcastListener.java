@@ -1,8 +1,7 @@
-package com.elinium.util.ui.broadcast;
+package com.elinium.util.broadcast;
 
 
 import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.OnLifecycleEvent;
@@ -15,10 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.ArrayMap;
 import android.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**

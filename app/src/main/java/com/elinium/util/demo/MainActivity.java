@@ -10,8 +10,8 @@ import android.util.Log;
 
 import com.elinium.util.demo.items.SampleItem;
 import com.elinium.util.exceptionhandling.ExceptionHandler;
-import com.elinium.util.ui.broadcast.OnBroadcastReceived;
-import com.elinium.util.ui.broadcast.BroadcastListener;
+import com.elinium.util.broadcast.OnBroadcastReceived;
+import com.elinium.util.broadcast.BroadcastListener;
 import com.elinium.util.ui.recyclerview.BaseAdapter;
 
 import java.util.ArrayList;

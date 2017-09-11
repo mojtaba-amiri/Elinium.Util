@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.elinium.util.exceptionhandling.ExceptionHandler;
-import com.elinium.util.ui.broadcast.BroadcastListener;
+import com.elinium.util.broadcast.BroadcastListener;
 
 /**
  * Created by amiri on 9/6/2017.

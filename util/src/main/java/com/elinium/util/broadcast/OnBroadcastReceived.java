@@ -1,4 +1,4 @@
-package com.elinium.util.ui.broadcast;
+package com.elinium.util.broadcast;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
