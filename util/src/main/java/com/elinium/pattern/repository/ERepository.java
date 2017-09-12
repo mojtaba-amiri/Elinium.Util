@@ -17,22 +17,25 @@ import java.util.List;
  * If Data
  */
 
-public interface IRepository<T, KEY_TYPE> {
+public interface ERepository<T, KEY_TYPE> {
     //region CREATE
-    void create(T... instances);
+    int create(T... instances);
     //endregion
 
     //region READ
     T read(T instance);
 
-    List<T> query(KEY_TYPE key);
+    T read(KEY_TYPE... instance);
+
+    T readSynchronized(KEY_TYPE... instance);
     //endregion
 
     //region UPDATE
-    void update(T... instances);
+    int update(T... instances);
     //endregion
 
     //region DELETE
-    void delete(T... instances);
+    int delete(T... instances);
     //endregion
+
 }
