@@ -8,6 +8,6 @@ import java.util.Map;
  * Created by amiri on 9/11/2017.
  */
 
-public interface WebRepository<T, KEY_TYPE> extends ERepository {
-    Map<KEY_TYPE, Long> getTimeStamps(T... instances);
+public interface EWebRepository<T, KEY_TYPE> extends ERepository<T, KEY_TYPE> {
+    Map<KEY_TYPE, Long> getWebTimeStamps(T... instances);
 }

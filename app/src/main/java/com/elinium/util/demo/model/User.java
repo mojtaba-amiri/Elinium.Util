@@ -1,4 +1,4 @@
-package com.elinium.pattern.repository.room;
+package com.elinium.util.demo.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;

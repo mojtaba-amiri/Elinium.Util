@@ -1,7 +1,9 @@
-package com.elinium.pattern.repository.room;
+package com.elinium.util.demo.repository.local.database;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
+
+import com.elinium.util.demo.model.User;
 
 /**
  * Created by amiri on 9/10/2017.

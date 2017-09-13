@@ -1,4 +1,4 @@
-package com.elinium.util.demo;
+package com.elinium.util.demo.view;
 
 import android.arch.lifecycle.LifecycleActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -8,14 +8,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.elinium.pattern.repository.ERepository;
+import com.elinium.pattern.repository.RepoSynchronizer;
+import com.elinium.util.demo.R;
 import com.elinium.util.demo.items.SampleItem;
+import com.elinium.util.demo.repository.UserRepository;
 import com.elinium.util.exceptionhandling.ExceptionHandler;
 import com.elinium.util.ui.broadcast.OnBroadcastReceived;
 import com.elinium.util.ui.broadcast.BroadcastListener;
 import com.elinium.util.ui.recyclerview.BaseAdapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+
+import dalvik.system.DexFile;
 
 
 public class MainActivity extends LifecycleActivity implements ExceptionHandler.IExceptionHandler {
@@ -31,6 +39,19 @@ public class MainActivity extends LifecycleActivity implements ExceptionHandler.
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         loadList();
+//        List<Class<? extends ERepository>> repos = new ArrayList<>();
+//        repos.add(UserRepository.class);
+//        RepoSynchronizer.init(repos);
+
+
+//        try {
+//            DexFile df = new DexFile(getApplicationContext().getPackageCodePath());
+//            for (Enumeration<String> iter = df.entries(); iter.hasMoreElements(); ) {
+//                Log.d("MainActivity", "Class:" + iter.nextElement());
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         Log.d("MainActivity", "INIT START");
         BroadcastListener.initialize(this);

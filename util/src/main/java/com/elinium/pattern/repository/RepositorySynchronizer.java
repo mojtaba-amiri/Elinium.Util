@@ -1,47 +1,34 @@
 package com.elinium.pattern.repository;
 
 import android.content.Context;
-import android.os.AsyncTask;
-
-import org.reactivestreams.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 
 /**
  * Created by amiri on 9/11/2017.
  */
 
-public class RepositorySynchronizer<T, KEY_TYPE> implements Runnable {
-    LocalRepository<T, KEY_TYPE> localRepository;
-    WebRepository<T, KEY_TYPE> webRepository;
+public class RepositorySynchronizer<T, KEY_TYPE> {
+    ELocalRepository<T, KEY_TYPE> ELocalRepository;
+    EWebRepository<T, KEY_TYPE> EWebRepository;
     List<KEY_TYPE> tobeDeletedFromLocal;
     List<KEY_TYPE> tobeGetFromServer;
 
-    @Override
-    public void run() {
-    }
-
-    public RepositorySynchronizer(LocalRepository<T, KEY_TYPE> localRepository, WebRepository<T, KEY_TYPE> webRepository) {
-        this.localRepository = localRepository;
-        this.webRepository = webRepository;
+    public RepositorySynchronizer(ELocalRepository<T, KEY_TYPE> ELocalRepository, EWebRepository<T, KEY_TYPE> EWebRepository) {
+        this.ELocalRepository = ELocalRepository;
+        this.EWebRepository = EWebRepository;
     }
 
     public void startSyncing(Context context, AsyncLocalUpdater.UpdateListener<KEY_TYPE> listener) throws Exception {
-        if (localRepository == null || webRepository == null) {
+        if (ELocalRepository == null || EWebRepository == null) {
             throw new Exception("The local repository or web repository are null.");
         }
 
-        Map<KEY_TYPE, Long> localTimeStaps = localRepository.getTimeStamps();
-        Map<KEY_TYPE, Long> webTimeStaps = webRepository.getTimeStamps();
+        Map<KEY_TYPE, Long> localTimeStaps = ELocalRepository.getLocalTimeStamps();
+        Map<KEY_TYPE, Long> webTimeStaps = EWebRepository.getWebTimeStamps();
         tobeDeletedFromLocal = new ArrayList<>();
         tobeGetFromServer = new ArrayList<>();
 
@@ -64,7 +51,7 @@ public class RepositorySynchronizer<T, KEY_TYPE> implements Runnable {
             }
         }
 
-        AsyncLocalUpdater asyncLocalUpdater = new AsyncLocalUpdater(context, localRepository, webRepository, tobeDeletedFromLocal, tobeGetFromServer);
+        AsyncLocalUpdater asyncLocalUpdater = new AsyncLocalUpdater(context, ELocalRepository, EWebRepository, tobeDeletedFromLocal, tobeGetFromServer);
         asyncLocalUpdater.addUpdateListener(listener);
         asyncLocalUpdater.execute();
     }

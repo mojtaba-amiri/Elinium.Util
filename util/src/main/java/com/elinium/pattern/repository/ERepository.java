@@ -18,6 +18,11 @@ import java.util.List;
  */
 
 public interface ERepository<T, KEY_TYPE> {
+
+    Class<T> getEntityClass();
+
+    Class<KEY_TYPE> getKeyType();
+
     //region CREATE
     int create(T... instances);
     //endregion
@@ -36,6 +41,10 @@ public interface ERepository<T, KEY_TYPE> {
 
     //region DELETE
     int delete(T... instances);
+
+    int deleteByKey(KEY_TYPE... keys);
     //endregion
+
+    RepositorySynchronizer<T,KEY_TYPE> getSynchronizer();
 
 }

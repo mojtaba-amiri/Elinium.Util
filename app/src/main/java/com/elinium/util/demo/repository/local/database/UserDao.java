@@ -1,10 +1,12 @@
-package com.elinium.pattern.repository.room;
+package com.elinium.util.demo.repository.local.database;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+
+import com.elinium.util.demo.model.User;
 
 import java.util.List;
 
