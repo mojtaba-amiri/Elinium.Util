@@ -35,7 +35,7 @@ public class UserRepository implements ELocalRepository<User, Long>, EWebReposit
     }
 
     @Override
-    public Map<Long, Long> getWebTimeStamps(User... instances) {
+    public Map<Long, Long> getWebTimeStampsSynchronized(User... instances) {
         return null;
     }
 

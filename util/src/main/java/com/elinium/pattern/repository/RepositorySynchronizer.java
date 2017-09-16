@@ -28,7 +28,7 @@ public class RepositorySynchronizer<T, KEY_TYPE> {
         }
 
         Map<KEY_TYPE, Long> localTimeStaps = ELocalRepository.getLocalTimeStamps();
-        Map<KEY_TYPE, Long> webTimeStaps = EWebRepository.getWebTimeStamps();
+        Map<KEY_TYPE, Long> webTimeStaps = EWebRepository.getWebTimeStampsSynchronized();
         tobeDeletedFromLocal = new ArrayList<>();
         tobeGetFromServer = new ArrayList<>();
 

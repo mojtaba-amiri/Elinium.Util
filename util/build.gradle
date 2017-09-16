@@ -43,4 +43,5 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha9"
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    compile 'com.firebase:firebase-jobdispatcher:0.8.1'
 }

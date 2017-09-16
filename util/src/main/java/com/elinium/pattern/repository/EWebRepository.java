@@ -9,5 +9,5 @@ import java.util.Map;
  */
 
 public interface EWebRepository<T, KEY_TYPE> extends ERepository<T, KEY_TYPE> {
-    Map<KEY_TYPE, Long> getWebTimeStamps(T... instances);
+     Map<KEY_TYPE, Long> getWebTimeStampsSynchronized(T... instances);
 }
