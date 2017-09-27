@@ -1,8 +1,8 @@
 package com.elinium.util.demo.repository;
 
-import com.elinium.pattern.repository.ELocalRepository;
-import com.elinium.pattern.repository.EWebRepository;
-import com.elinium.pattern.repository.RepositorySynchronizer;
+import com.elinium.repository.base.ILocalRepository;
+import com.elinium.repository.base.IWebRepository;
+import com.elinium.repository.synchronization.RepositorySynchronizer;
 import com.elinium.util.demo.model.User;
 
 /**
@@ -11,7 +11,7 @@ import com.elinium.util.demo.model.User;
 
 public class Sync extends RepositorySynchronizer<User, Long> {
 
-    public Sync(ELocalRepository<User, Long> ELocalRepository, EWebRepository<User, Long> EWebRepository) {
-        super(ELocalRepository, EWebRepository);
+    public Sync(ILocalRepository<User, Long> ILocalRepository, IWebRepository<User, Long> EWebRepository) {
+        super(ILocalRepository, EWebRepository);
     }
 }

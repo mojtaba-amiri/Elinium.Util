@@ -1,7 +1,9 @@
-package com.elinium.pattern.repository;
+package com.elinium.repository.synchronization;
 
 import android.util.Log;
 
+import com.elinium.repository.base.ILocalRepository;
+import com.elinium.repository.base.IWebRepository;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 
@@ -22,7 +24,7 @@ public class SynchronizerJobService extends JobService implements AsyncLocalUpda
 
         for (Class repository : RepositoryManager.getRepositories()) {
             try {
-                new RepositorySynchronizer((ELocalRepository) repository.newInstance(), (EWebRepository) repository.newInstance()).startSyncing(RepositoryManager.getContext(), this);
+                new RepositorySynchronizer((ILocalRepository) repository.newInstance(), (IWebRepository) repository.newInstance()).startSyncing(RepositoryManager.getContext(), this);
             } catch (Exception e) {
                 e.printStackTrace();
             }

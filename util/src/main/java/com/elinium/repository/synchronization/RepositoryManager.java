@@ -1,8 +1,10 @@
-package com.elinium.pattern.repository;
+package com.elinium.repository.synchronization;
 
 import android.content.Context;
 import android.util.Log;
 
+import com.elinium.repository.base.IRepository;
+import com.elinium.repository.base.RepositorySet;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
@@ -24,12 +26,12 @@ public class RepositoryManager {
     private static final String JOB_TAG = "repo-sychronizer";
 
     private static RepositoryManager instance = null;
-    private static List<Class<? extends ERepository>> repositories = new ArrayList<>();
+    private static List<Class<? extends IRepository>> repositories = new ArrayList<>();
     private FirebaseJobDispatcher dispatcher;
     private static Context context;
 
 
-    static List<Class<? extends ERepository>> getRepositories() {
+    static List<Class<? extends IRepository>> getRepositories() {
         return repositories;
     }
 

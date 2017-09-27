@@ -1,4 +1,4 @@
-package com.elinium.pattern.repository;
+package com.elinium.repository.base;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RepositorySet {
-    Class<? extends ERepository>[] repositories();
+    Class<? extends IRepository>[] repositories();
 }

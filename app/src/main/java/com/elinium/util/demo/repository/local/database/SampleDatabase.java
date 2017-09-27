@@ -4,6 +4,7 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
 import com.elinium.util.demo.model.User;
+import com.elinium.util.demo.repository.local.dao.UserDao;
 
 /**
  * Created by amiri on 9/10/2017.

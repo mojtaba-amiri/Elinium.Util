@@ -1,6 +1,6 @@
-package com.elinium.pattern.repository;
+package com.elinium.repository.base;
 
-import java.util.List;
+import com.elinium.repository.synchronization.RepositorySynchronizer;
 
 /**
  * Created by amiri on 9/10/2017.
@@ -17,7 +17,7 @@ import java.util.List;
  * If Data
  */
 
-public interface ERepository<T, KEY_TYPE> {
+public interface IRepository<T, KEY_TYPE> {
 
     Class<T> getEntityClass();
 
@@ -30,9 +30,9 @@ public interface ERepository<T, KEY_TYPE> {
     //region READ
     T read(T instance);
 
-    T read(KEY_TYPE... instance);
+    T read(KEY_TYPE... ids);
 
-    T readSynchronized(KEY_TYPE... instance);
+    T readSynchronized(KEY_TYPE... ids);
     //endregion
 
     //region UPDATE
@@ -44,7 +44,5 @@ public interface ERepository<T, KEY_TYPE> {
 
     int deleteByKey(KEY_TYPE... keys);
     //endregion
-
-    RepositorySynchronizer<T,KEY_TYPE> getSynchronizer();
 
 }

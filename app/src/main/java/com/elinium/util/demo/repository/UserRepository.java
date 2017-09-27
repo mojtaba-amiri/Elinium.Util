@@ -1,10 +1,11 @@
 package com.elinium.util.demo.repository;
 
-import com.elinium.pattern.repository.ELocalRepository;
-import com.elinium.pattern.repository.EWebRepository;
-import com.elinium.pattern.repository.RepositorySynchronizer;
+import com.elinium.repository.base.ILocalRepository;
+import com.elinium.repository.base.IWebRepository;
+import com.elinium.repository.synchronization.RepositorySynchronizer;
 import com.elinium.util.demo.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,16 +13,20 @@ import java.util.Map;
  * Created by amiri on 9/12/2017.
  */
 
-public class UserRepository implements ELocalRepository<User, Long>, EWebRepository<User, Long> {
+public class UserRepository implements ILocalRepository<User, Long>, IWebRepository<User, Long> {
 
     @Override
     public Long getId(User instance) {
-        return null;
+        return Long.valueOf(instance.getUid());
     }
 
     @Override
-    public List<Long> getIds(User... instances) {
-        return null;
+    public List<Long> getIds(User... usrs) {
+        List<Long> ids = new ArrayList<>();
+        for (User user : usrs) {
+            ids.add(Long.valueOf(user.getUid()));
+        }
+        return ids;
     }
 
     @Override
@@ -60,12 +65,12 @@ public class UserRepository implements ELocalRepository<User, Long>, EWebReposit
     }
 
     @Override
-    public User read(Long... instance) {
+    public User read(Long... ids) {
         return null;
     }
 
     @Override
-    public User readSynchronized(Long... instance) {
+    public User readSynchronized(Long... ids) {
         return null;
     }
 
@@ -84,9 +89,9 @@ public class UserRepository implements ELocalRepository<User, Long>, EWebReposit
         return 0;
     }
 
-    @Override
-    public RepositorySynchronizer<User, Long> getSynchronizer() {
-        return null;
-    }
+//    @Override
+//    public RepositorySynchronizer<User, Long> getSynchronizer() {
+//        return null;
+//    }
 
 }

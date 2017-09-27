@@ -1,8 +1,11 @@
-package com.elinium.pattern.repository;
+package com.elinium.repository.synchronization;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.elinium.repository.base.ILocalRepository;
+import com.elinium.repository.base.IWebRepository;
 
 import java.util.List;
 
@@ -11,8 +14,8 @@ import java.util.List;
  */
 
 public class AsyncLocalUpdater<T, KEY_TYPE> extends AsyncTask<T, KEY_TYPE, Integer> {
-    ELocalRepository<T, KEY_TYPE> ELocalRepository;
-    EWebRepository<T, KEY_TYPE> EWebRepository;
+    ILocalRepository<T, KEY_TYPE> ILocalRepository;
+    IWebRepository<T, KEY_TYPE> EWebRepository;
 
     List<KEY_TYPE> tobeDeletedFromLocal;
     List<KEY_TYPE> tobeGetFromServer;
@@ -31,10 +34,10 @@ public class AsyncLocalUpdater<T, KEY_TYPE> extends AsyncTask<T, KEY_TYPE, Integ
         void onCompleted(int sumRecordsAffected);
     }
 
-    public AsyncLocalUpdater(Context context, ELocalRepository<T, KEY_TYPE> ELocalRepository, EWebRepository<T, KEY_TYPE> EWebRepository, List<KEY_TYPE> tobeDeletedFromLocal, List<KEY_TYPE> tobeGetFromServer) {
+    public AsyncLocalUpdater(Context context, ILocalRepository<T, KEY_TYPE> ILocalRepository, IWebRepository<T, KEY_TYPE> EWebRepository, List<KEY_TYPE> tobeDeletedFromLocal, List<KEY_TYPE> tobeGetFromServer) {
         this.tobeDeletedFromLocal = tobeDeletedFromLocal;
         this.tobeGetFromServer = tobeGetFromServer;
-        this.ELocalRepository = ELocalRepository;
+        this.ILocalRepository = ILocalRepository;
         this.EWebRepository = EWebRepository;
         this.context = context;
     }
@@ -49,7 +52,7 @@ public class AsyncLocalUpdater<T, KEY_TYPE> extends AsyncTask<T, KEY_TYPE, Integ
         try {
             if (tobeDeletedFromLocal != null) {
                 for (KEY_TYPE key : tobeDeletedFromLocal) {
-                    int deleted = ELocalRepository.deleteByKey(key);
+                    int deleted = ILocalRepository.deleteByKey(key);
                     sum += deleted;
                     if (updateListener != null && deleted > 0) {
                         deleteHappened = true;
@@ -63,7 +66,7 @@ public class AsyncLocalUpdater<T, KEY_TYPE> extends AsyncTask<T, KEY_TYPE, Integ
             if (tobeGetFromServer != null) {
                 for (KEY_TYPE key : tobeGetFromServer) {
                     T newObj = (T) EWebRepository.readSynchronized(key);
-                    ELocalRepository.update(newObj);
+                    ILocalRepository.update(newObj);
                     sum++;
                     if (updateListener != null) {
                         updateHappened = true;

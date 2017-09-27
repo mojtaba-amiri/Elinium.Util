@@ -1,4 +1,4 @@
-package com.elinium.util.demo.repository.local.database;
+package com.elinium.util.demo.repository.local.dao;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;

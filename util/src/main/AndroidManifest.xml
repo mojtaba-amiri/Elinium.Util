@@ -3,7 +3,7 @@
 
     <application>
         <service
-            android:name="com.elinium.pattern.repository.SynchronizerJobService"
+            android:name="com.elinium.repository.synchronization.SynchronizerJobService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
