@@ -1,4 +1,4 @@
-package com.elinium.util.demo;
+package com.elinium.util.demo.view;
 
 import android.arch.lifecycle.LifecycleActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.elinium.util.demo.R;
 import com.elinium.util.demo.items.SampleItem;
 import com.elinium.util.exceptionhandling.ExceptionHandler;
 import com.elinium.util.broadcast.OnBroadcastReceived;
@@ -31,6 +32,19 @@ public class MainActivity extends LifecycleActivity implements ExceptionHandler.
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         loadList();
+//        List<Class<? extends ERepository>> repos = new ArrayList<>();
+//        repos.add(UserRepository.class);
+//        RepositoryManager.init(repos);
+
+
+//        try {
+//            DexFile df = new DexFile(getApplicationContext().getPackageCodePath());
+//            for (Enumeration<String> iter = df.entries(); iter.hasMoreElements(); ) {
+//                Log.d("MainActivity", "Class:" + iter.nextElement());
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         Log.d("MainActivity", "INIT START");
         BroadcastListener.initialize(this);
