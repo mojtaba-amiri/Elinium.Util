@@ -1,4 +1,6 @@
-package com.elinium.util.ui.recyclerview;
+package com.elinium.util.ui.layout;
+
+import android.support.annotation.LayoutRes;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,7 +12,11 @@ import java.lang.annotation.Target;
  */
 
 @Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface Layout {
-  int id() default 0;
+    @LayoutRes int id() default 0;
+
+    int windowFeature() default -1;
+
+    boolean fullScreen() default false;
 }

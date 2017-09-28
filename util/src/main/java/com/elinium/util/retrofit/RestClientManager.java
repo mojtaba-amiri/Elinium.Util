@@ -41,7 +41,7 @@ public class RestClientManager {
             for (Class<? extends Object> endpoint : annotation.endpoints()) {
                 Endpoint endpointAnnot = endpoint.getAnnotation(Endpoint.class);
                 if (endpointAnnot != null) {
-                    setupRestClient(endpoint, endpointAnnot.baseUrl(), interceptor != null ? interceptor.interceptors() : null);
+                    setupRestClient(endpoint, endpointAnnot.baseUrl(), annotation.timeout(), interceptor != null ? interceptor.interceptors() : null);
                 }
             }
         }
@@ -95,34 +95,34 @@ public class RestClientManager {
         return null;
     }
 
-    protected <T> Retrofit.Builder getBuilder(Class<T> endpointClass) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder.create();
-        OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
-//        builder.readTimeout(55, TimeUnit.SECONDS);
-//        builder.writeTimeout(55, TimeUnit.SECONDS);
-//        builder.connectTimeout(55, TimeUnit.SECONDS);
-
-//        if (BuildConfig.DEBUG) {
-//            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-//            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-//            builder.addInterceptor(loggingInterceptor);
-//            builder.addNetworkInterceptor(new StethoInterceptor());
-//        }
-
-//        builder.addInterceptor(
-//                new NexApiHeaderInterceptor(myAuthToken, MCBandSession.getDeviceId(), longi, lat));
-
-        //builder.addInterceptor(new UnauthorisedInterceptor());
-
-        OkHttpClient client = builder.build();
-
-        Retrofit restAdapter = new Retrofit.Builder().baseUrl(BuildConfig.endpoint_url)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(client)
-                .build();
-
-        return null;
-    }
+//    protected <T> Retrofit.Builder getBuilder(Class<T> endpointClass) {
+//        GsonBuilder gsonBuilder = new GsonBuilder();
+//        Gson gson = gsonBuilder.create();
+//        OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
+////        builder.readTimeout(55, TimeUnit.SECONDS);
+////        builder.writeTimeout(55, TimeUnit.SECONDS);
+////        builder.connectTimeout(55, TimeUnit.SECONDS);
+//
+////        if (BuildConfig.DEBUG) {
+////            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+////            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+////            builder.addInterceptor(loggingInterceptor);
+////            builder.addNetworkInterceptor(new StethoInterceptor());
+////        }
+//
+////        builder.addInterceptor(
+////                new NexApiHeaderInterceptor(myAuthToken, MCBandSession.getDeviceId(), longi, lat));
+//
+//        //builder.addInterceptor(new UnauthorisedInterceptor());
+//
+//        OkHttpClient client = builder.build();
+//
+//        Retrofit restAdapter = new Retrofit.Builder().baseUrl(BuildConfig.endpoint_url)
+//                .addConverterFactory(GsonConverterFactory.create(gson))
+//                .client(client)
+//                .build();
+//
+//        return null;
+//    }
 
 }
