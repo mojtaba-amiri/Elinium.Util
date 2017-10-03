@@ -17,59 +17,77 @@ import static android.support.v7.widget.RecyclerView.NO_POSITION;
  */
 
 public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
-  private IItemObserver parentItemObserver;
+    private IItemObserver parentItemObserver;
+    protected DATA_TYPE data;
+    protected int position;
+    protected OnItemClicked<DATA_TYPE> onItemClicked;
 
-  public abstract void bind(BaseViewHolder viewHolder, int position);
-
-  public @LayoutRes int getLayout() {
-
-    try {
-      Layout layout = getClass().getAnnotation(Layout.class);
-      if (layout != null) return layout.id();
-    } catch (Exception e) {
-      Log.e("BaseItem",
-          "BaseItem layout id is not specified. use @Layout annotation above your BaseItem class.");
+    public interface OnItemClicked<DATA_TYPE> {
+        void onItemClicked(View v, DATA_TYPE data, int position);
     }
-    Log.e("BaseItem",
-        "BaseItem layout id is not specified. use @Layout annotation above your BaseItem class.");
-    return 0;
-  }
 
-  protected BaseViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent) {
-    try {
-      return new BaseViewHolder(inflater.inflate(getLayout(), parent, false));
-    } catch (Exception e) {
-      e.printStackTrace();
+    public abstract void bind(BaseViewHolder viewHolder, int position);
+
+    public BaseItem(DATA_TYPE data, OnItemClicked<DATA_TYPE> onItemClicked) {
+        this.data = data;
+        this.onItemClicked = onItemClicked;
     }
-    return null;
-  }
 
-  public void bind(T viewHolder, int position, List<Object> payloads) {
-    viewHolder.itemView.setTag(this);
-    try {
-      bind(viewHolder, position);
-      setOnClickListener(viewHolder);
-    } catch (Exception e) {
-      Log.e("TAGGG", "err: " + e.getMessage());
+    public @LayoutRes
+    int getLayout() {
+
+        try {
+            Layout layout = getClass().getAnnotation(Layout.class);
+            if (layout != null) return layout.id();
+        } catch (Exception e) {
+            Log.e("BaseItem",
+                    "BaseItem layout id is not specified. use @Layout annotation above your BaseItem class.");
+        }
+        Log.e("BaseItem",
+                "BaseItem layout id is not specified. use @Layout annotation above your BaseItem class.");
+        return 0;
     }
-  }
 
-  public void setOnClickListener(BaseViewHolder viewHolder) {
-    if (viewHolder != null && viewHolder.getAdapterPosition() != NO_POSITION) {
-      viewHolder.itemView.setOnClickListener(onClicked(viewHolder.getAdapterPosition()));
+    protected BaseViewHolder onCreateViewHolder(LayoutInflater inflater, ViewGroup parent) {
+        try {
+            return new BaseViewHolder(inflater.inflate(getLayout(), parent, false));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-  }
 
-  public void setItemObserver(IItemObserver itemObserver) {
-    this.parentItemObserver = itemObserver;
-  }
+    public void bind(T viewHolder, int position, List<Object> payloads) {
+        viewHolder.itemView.setTag(this);
+        try {
+            bind(viewHolder, position);
+            setOnClickListener(viewHolder);
+        } catch (Exception e) {
+            Log.e("TAGGG", "err: " + e.getMessage());
+        }
+    }
 
-  public abstract int getDataItemId();
+    public void setOnClickListener(BaseViewHolder viewHolder) {
+        if (onItemClicked != null && viewHolder != null && viewHolder.getAdapterPosition() != NO_POSITION) {
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClicked.onItemClicked(view, data, position);
+                }
+            });
+        }
+    }
 
-  public abstract DATA_TYPE getDataItem();
+    public void setItemObserver(IItemObserver itemObserver) {
+        this.parentItemObserver = itemObserver;
+    }
 
-  public abstract View.OnClickListener onClicked(final int position);
+    public abstract int getDataItemId();
 
-  public void unbindView(T viewHolder) {
-  }
+    protected DATA_TYPE getDataItem() {
+        return data;
+    }
+
+    public void unbindView(T viewHolder) {
+    }
 }

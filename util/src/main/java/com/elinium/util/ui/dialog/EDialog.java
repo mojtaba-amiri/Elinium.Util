@@ -1,45 +1,50 @@
-package com.elinium.util.ui.activity;
+package com.elinium.util.ui.dialog;
 
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.elinium.util.exceptionhandling.ExceptionHandler;
-import com.elinium.util.broadcast.BroadcastListener;
 import com.elinium.util.ui.layout.Layout;
 
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 /**
- * Created by amiri on 9/6/2017.
+ * Created by amiri on 9/29/2017.
  */
 
+public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
+    INPUT_TYPE dialogInput;
+    OnDialogResult callback;
 
-public abstract class EActivity extends AppCompatActivity implements ExceptionHandler.IExceptionHandler {
-    protected final String TAG = getClass().getSimpleName();
-    private boolean initialized = false;
-    private Unbinder unbinder;
+    public interface OnDialogResult<OUTPUT> {
+        void onDialogResult(OUTPUT output);
+    }
+
+    public EDialog(Context context, OnDialogResult<OUTPUT_TYPE> resultCallback) {
+        super(context);
+        callback = resultCallback;
+    }
+
+    public EDialog(Context context, INPUT_TYPE input, OnDialogResult<OUTPUT_TYPE> resultCallback) {
+        super(context);
+        dialogInput = input;
+        callback = resultCallback;
+    }
+
+    public void returnResult(OUTPUT_TYPE output) {
+        if (callback != null) callback.onDialogResult(output);
+        dismiss();
+    }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         try {
-            BroadcastListener.initialize(this);
-            ExceptionHandler.register(this);
-            initialized = true;
             Layout layout = getLayout();
-
-            if (layout == null) {
-                Log.e(TAG, "you must add @Layout annotation to you activity class");
-                return;
-            }
-
             if (layout.windowFeature() >= 0) {
                 requestWindowFeature(layout.windowFeature());
             }
@@ -47,9 +52,6 @@ public abstract class EActivity extends AppCompatActivity implements ExceptionHa
             if (layout.noTitle()) {
                 requestWindowFeature(Window.FEATURE_NO_TITLE);
             }
-
-            getSupportActionBar().hide();
-
 
             if (layout.transparent()) {
                 getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -60,12 +62,10 @@ public abstract class EActivity extends AppCompatActivity implements ExceptionHa
             }
 
             setContentView(getLayoutId());
-            unbinder = ButterKnife.bind(this);
+            ButterKnife.bind(this);
         } catch (Exception e) {
-            Log.e(TAG, "EActivity onCreate error:" + e.getMessage());
+            Log.e("EDialog", "onCreate:" + e.getMessage());
         }
-
-
     }
 
     private Layout getLayout() throws Exception {
@@ -88,20 +88,4 @@ public abstract class EActivity extends AppCompatActivity implements ExceptionHa
         return 0;
     }
 
-    @Override
-    protected void onDestroy() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onException(String threadName, Throwable throwable) {
-        Log.e("EActivity", "" + getClass().getSimpleName() + " Exception:" + throwable.getMessage());
-        onUnhandledException(threadName, throwable);
-    }
-
-
-    public abstract void onUnhandledException(String threadName, Throwable throwable);
 }
