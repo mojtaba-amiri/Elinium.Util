@@ -24,17 +24,26 @@ public abstract class EActivity extends AppCompatActivity implements ExceptionHa
     protected final String TAG = getClass().getSimpleName();
     private boolean initialized = false;
     private Unbinder unbinder;
+    private BroadcastListener broadcastListener;
+
+    public void addLocalBroadcastAction(String action, String methodName) {
+        broadcastListener.addLocalAnnotatedAction(action, methodName);
+    }
+
+    public void registerReceivers(){
+        if (!broadcastListener.isLifecycleObserverInit()) broadcastListener.registerReceivers();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         try {
-            BroadcastListener.initialize(this);
+            broadcastListener = BroadcastListener.initialize(this);
+
             ExceptionHandler.register(this);
             initialized = true;
             Layout layout = getLayout();
-
             if (layout == null) {
                 Log.e(TAG, "you must add @Layout annotation to you activity class");
                 return;
@@ -46,9 +55,8 @@ public abstract class EActivity extends AppCompatActivity implements ExceptionHa
 
             if (layout.noTitle()) {
                 requestWindowFeature(Window.FEATURE_NO_TITLE);
+                if (getSupportActionBar() != null) getSupportActionBar().hide();
             }
-
-            getSupportActionBar().hide();
 
 
             if (layout.transparent()) {
@@ -93,6 +101,8 @@ public abstract class EActivity extends AppCompatActivity implements ExceptionHa
         if (unbinder != null) {
             unbinder.unbind();
         }
+
+        if (!broadcastListener.isLifecycleObserverInit()) broadcastListener.unregisterReceivers();
         super.onDestroy();
     }
 

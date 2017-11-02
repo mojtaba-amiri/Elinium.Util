@@ -67,12 +67,12 @@ public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
         }
     }
 
-    public void setOnClickListener(BaseViewHolder viewHolder) {
+    public void setOnClickListener(final BaseViewHolder viewHolder) {
         if (onItemClicked != null && viewHolder != null && viewHolder.getAdapterPosition() != NO_POSITION) {
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClicked.onItemClicked(view, data, position);
+                    onItemClicked.onItemClicked(view, data, viewHolder.getAdapterPosition());
                 }
             });
         }

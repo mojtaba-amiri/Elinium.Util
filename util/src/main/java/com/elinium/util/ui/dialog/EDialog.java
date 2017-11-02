@@ -73,7 +73,7 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
         if (layout != null) {
             return layout;
         } else {
-            throw new Exception("EActivity layout id is not specified. use @Layout annotation above your Activity class.");
+            throw new Exception("EDialog layout id is not specified. use @Layout annotation above your Dialog class.");
         }
     }
 

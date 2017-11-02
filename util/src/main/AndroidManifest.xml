@@ -9,6 +9,5 @@
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
-        <activity android:name=".ui.activity.ETabbedActivity" />
     </application>
 </manifest>

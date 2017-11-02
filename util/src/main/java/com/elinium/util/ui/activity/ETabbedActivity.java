@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.elinium.util.R;
 import com.elinium.util.broadcast.BroadcastListener;
 import com.elinium.util.exceptionhandling.ExceptionHandler;
 import com.elinium.util.ui.fragment.ETabFragment;
@@ -43,12 +44,17 @@ public abstract class ETabbedActivity extends AppCompatActivity implements Excep
     private SparseArray<ETabFragment> fragments = new SparseArray<>();
     private EFragmentPagerAdapter fragmentPagerAdapter;
     private Map<String, Method> actions = new ArrayMap<>();
+    private BroadcastListener broadcastListener;
+
+    public void addLocalBroadcastAction(String action, String methodName) {
+        broadcastListener.addLocalAnnotatedAction(action, methodName);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            BroadcastListener.initialize(this);
+            broadcastListener = BroadcastListener.initialize(this);
             ExceptionHandler.register(this);
             TabbedLayout layout = getLayout();
 
@@ -143,7 +149,15 @@ public abstract class ETabbedActivity extends AppCompatActivity implements Excep
                         fragment.setArguments(getInitialBundleFor((getLayout().fragments()[i])));
                         fragments.setValueAt(i, fragment);
                     }
-                    tabLayout.getTabAt(i).setIcon(fragments.get(i).getTabIcon());
+                    View view1 = getLayoutInflater().inflate(R.layout.custom_tab, null);
+                    view1.findViewById(R.id.imgIcon).setBackgroundResource(fragments.get(i).getTabIcon());
+                    tabLayout.getTabAt(i).setCustomView(view1);
+                    //tabLayout.getTabAt(i).setIcon(fragments.get(i).getTabIcon());
+                    //tabLayout.getTabAt(i).setText(fragments.get(i).getTabTitle());
+//                    for (int i = 0; i < tabLayout.getTabAt(1).getChildCount(); i++)
+//                    {
+//                        tablayout.getTabWidget().getChildAt(i).setPadding(10,10,10,10);
+//                    }
                 } catch (Exception e) {
                     Log.e(TAG, "set TabIcons Error:" + e.getMessage());
                 }
@@ -207,7 +221,8 @@ public abstract class ETabbedActivity extends AppCompatActivity implements Excep
     }
 
     protected void onPageSelected(int position) {
-
+        if (getSupportActionBar() != null && fragments.get(position) != null)
+            getSupportActionBar().setTitle(fragments.get(position).getTabTitle());
     }
 
     protected void onPageScrollStateChanged(int state) {

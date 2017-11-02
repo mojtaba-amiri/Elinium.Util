@@ -60,7 +60,7 @@ public class ImageSaver {
     }
 
     @NonNull
-    private File createFile() {
+    public File createFile() {
         File directory;
         if (external) {
             directory = getAlbumStorageDir(directoryName);
@@ -68,7 +68,7 @@ public class ImageSaver {
             directory = context.getDir(directoryName, Context.MODE_PRIVATE);
         }
 
-        return new File(directory, fileName);
+        return new File(directory   , fileName);
     }
 
     private File getAlbumStorageDir(String albumName) {

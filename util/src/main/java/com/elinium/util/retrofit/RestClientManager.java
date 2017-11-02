@@ -27,7 +27,6 @@ public class RestClientManager {
     private Context context;
     private static RestClientManager instance = null;
 
-
     public static void setup(Context context) {
         new RestClientManager(context);
     }
@@ -41,12 +40,11 @@ public class RestClientManager {
             for (Class<? extends Object> endpoint : annotation.endpoints()) {
                 Endpoint endpointAnnot = endpoint.getAnnotation(Endpoint.class);
                 if (endpointAnnot != null) {
-                    setupRestClient(endpoint, endpointAnnot.baseUrl(), annotation.timeout(), interceptor != null ? interceptor.interceptors() : null);
+                    setupRestClient(endpoint, endpointAnnot.baseUrl(), annotation.timeout(), interceptor != null ? interceptor.value() : null);
                 }
             }
         }
     }
-
 
     public <T> void setupRestClient(Class<T> endpointClass, String endpointBaseUrl, int timeoutSeconds, Class<? extends Interceptor>[] interceptors) {
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -68,7 +66,6 @@ public class RestClientManager {
 
 //        builder.addInterceptor(
 //                new NexApiHeaderInterceptor(myAuthToken, MCBandSession.getDeviceId(), longi, lat));
-
         //builder.addInterceptor(new UnauthorisedInterceptor());
 
         OkHttpClient client = builder.build();
