@@ -5,9 +5,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.elinium.util.demo.R;
+import com.elinium.util.ui.layout.Layout;
 import com.elinium.util.ui.recyclerview.BaseItem;
 import com.elinium.util.ui.recyclerview.BaseViewHolder;
-import com.elinium.util.ui.recyclerview.Layout;
 
 /**
  * Created by amiri on 9/9/2017.
@@ -18,9 +18,9 @@ public class SampleItem extends BaseItem<BaseViewHolder, String> {
   private String label;
   private int index;
 
-  public SampleItem(int index, String label) {
-    this.label = label;
-    this.index = index;
+  public SampleItem(String data, OnItemClicked<String> onItemClicked) {
+    super(data, onItemClicked);
+    this.label = data;
   }
 
   @Override public void bind(BaseViewHolder viewHolder, final int position) {
@@ -36,13 +36,5 @@ public class SampleItem extends BaseItem<BaseViewHolder, String> {
 
   @Override public String getDataItem() {
     return null;
-  }
-
-  @Override public View.OnClickListener onClicked(final int position) {
-    return new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        Log.d("SampleItem", "Click:" + position);
-      }
-    };
   }
 }

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.elinium.util.demo"
         minSdkVersion 19
@@ -32,8 +32,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation project(':util')
-
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile "android.arch.persistence.room:runtime:1.0.0-alpha9"
-    annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha9"
+    implementation "android.arch.lifecycle:common-java8:1.0.0-rc1"
+    compile 'com.google.code.gson:gson:2.8.1'
+    compile "android.arch.persistence.room:runtime:1.0.0-rc1"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0-rc1"
 }
