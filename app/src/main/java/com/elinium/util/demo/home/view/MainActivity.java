@@ -1,4 +1,4 @@
-package com.elinium.util.demo.view;
+package com.elinium.util.demo.home.view;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements ExceptionHandler.
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
 
     loadList();
     //        List<Class<? extends ERepository>> repos = new ArrayList<>();
