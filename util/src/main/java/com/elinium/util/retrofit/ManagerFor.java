@@ -14,4 +14,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ManagerFor {
     Class<? extends Object>[] endpoints();
+
+    int timeout() default 30;
 }

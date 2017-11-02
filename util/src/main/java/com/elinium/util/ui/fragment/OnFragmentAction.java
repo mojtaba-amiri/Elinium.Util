@@ -1,4 +1,4 @@
-package com.elinium.util.ui.recyclerview;
+package com.elinium.util.ui.fragment;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,11 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by mojtabaa on 2017-09-11.
+ * Created by amiri on 10/2/2017.
  */
 
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Layout {
-  int id() default 0;
+public @interface OnFragmentAction {
+    String value() default "";
 }

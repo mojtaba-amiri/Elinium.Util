@@ -14,5 +14,5 @@ import okhttp3.Interceptor;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AddInterceptor {
-    Class<? extends Interceptor>[] interceptors();
+    Class<? extends Interceptor>[] value();
 }
