@@ -41,7 +41,10 @@ public class BaseOperation<T> extends AsyncTask<Context, T, T> {
     @Override
     protected T doInBackground(Context... contexts) {
         try {
-            if (operation != null) return operation.Do(contexts.length == 0 ? null : contexts[0]);
+            synchronized (this) {
+                if (operation != null)
+                    return operation.Do(contexts.length == 0 ? null : contexts[0]);
+            }
         } catch (Exception e) {
             throwable = e;
         }

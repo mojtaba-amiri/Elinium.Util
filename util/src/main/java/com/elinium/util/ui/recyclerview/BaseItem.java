@@ -17,9 +17,13 @@ import static android.support.v7.widget.RecyclerView.NO_POSITION;
  */
 
 public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
+    private static final String TAG = "BaseItem";
     private IItemObserver parentItemObserver;
     protected DATA_TYPE data;
     protected int position;
+    protected long id;
+    protected long group;
+    protected boolean clickHandlesBySubUiItems = false;
     protected OnItemClicked<DATA_TYPE> onItemClicked;
 
     public interface OnItemClicked<DATA_TYPE> {
@@ -27,6 +31,13 @@ public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
     }
 
     public abstract void bind(BaseViewHolder viewHolder, int position);
+
+    public BaseItem(long group, long id, DATA_TYPE data, OnItemClicked<DATA_TYPE> onItemClicked) {
+        this.data = data;
+        this.onItemClicked = onItemClicked;
+        this.group = group;
+        this.id = id;
+    }
 
     public BaseItem(DATA_TYPE data, OnItemClicked<DATA_TYPE> onItemClicked) {
         this.data = data;
@@ -40,10 +51,10 @@ public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
             Layout layout = getClass().getAnnotation(Layout.class);
             if (layout != null) return layout.id();
         } catch (Exception e) {
-            Log.e("BaseItem",
+            Log.e(TAG,
                     "BaseItem layout id is not specified. use @Layout annotation above your BaseItem class.");
         }
-        Log.e("BaseItem",
+        Log.e(TAG,
                 "BaseItem layout id is not specified. use @Layout annotation above your BaseItem class.");
         return 0;
     }
@@ -52,7 +63,7 @@ public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
         try {
             return new BaseViewHolder(inflater.inflate(getLayout(), parent, false));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "BaseItem.onCreateViewHolder error: " + e.getMessage());
         }
         return null;
     }
@@ -61,9 +72,9 @@ public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
         viewHolder.itemView.setTag(this);
         try {
             bind(viewHolder, position);
-            setOnClickListener(viewHolder);
+            if (!clickHandlesBySubUiItems) setOnClickListener(viewHolder);
         } catch (Exception e) {
-            Log.e("TAGGG", "err: " + e.getMessage());
+            Log.e(TAG, "BaseItem.bind error: " + e.getMessage());
         }
     }
 
@@ -72,7 +83,12 @@ public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClicked.onItemClicked(view, data, viewHolder.getAdapterPosition());
+                    try {
+                        onItemClicked.onItemClicked(view, data, viewHolder.getAdapterPosition());
+                    }
+                    catch (Exception e){
+                        Log.e(TAG, "BaseItem.OnClickListener error: " + e.getMessage());
+                    }
                 }
             });
         }
@@ -82,7 +98,11 @@ public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
         this.parentItemObserver = itemObserver;
     }
 
-    public abstract int getDataItemId();
+    public abstract long getDataItemId();
+
+    public abstract long getSortIndex();
+
+    public abstract long getGroupId();
 
     protected DATA_TYPE getDataItem() {
         return data;

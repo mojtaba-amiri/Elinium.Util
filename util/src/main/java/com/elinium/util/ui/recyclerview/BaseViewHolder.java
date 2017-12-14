@@ -25,4 +25,6 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     if (!views.containsKey(resourceId)) views.put(resourceId, itemView.findViewById(resourceId));
     return (T) views.get(resourceId);
   }
+
+
 }
