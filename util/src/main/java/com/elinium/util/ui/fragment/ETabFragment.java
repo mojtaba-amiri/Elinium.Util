@@ -3,18 +3,27 @@ package com.elinium.util.ui.fragment;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.elinium.mvc.BaseOperation;
 import com.elinium.util.ui.layout.Layout;
+
+import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by amiri on 10/2/2017.
@@ -127,4 +136,29 @@ public abstract class ETabFragment extends Fragment {
         }
         super.onDestroy();
     }
+
+
+    public <T> void DoAsync(BaseOperation.AsyncOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+        DoAsync(null, operation, callback);
+    }
+
+
+    public <T> void DoAsync(Context context, BaseOperation.AsyncOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+        Single.fromCallable(new Callable<T>() {
+            @Override
+            public T call() {
+                return operation.Do(context);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<T>() {
+                    @Override
+                    public void accept(T obj) throws Exception {
+                        callback.onDone(obj, null);
+                    }
+                }, throwable -> {
+                    callback.onDone(null, throwable);
+                });
+    }
+
 }

@@ -357,7 +357,6 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
     //endregion
 
-
     //region Remove Item Functions
     public void removeItemAtPosition(int position) {
         removeItemAtPosition(position, true);

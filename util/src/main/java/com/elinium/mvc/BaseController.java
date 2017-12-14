@@ -60,6 +60,8 @@ public abstract class BaseController<T> implements DefaultLifecycleObserver {
                     public void accept(T obj) throws Exception {
                         callback.onDone(obj, null);
                     }
+                }, throwable -> {
+                    callback.onDone(null, throwable);
                 });
         //new BaseOperation<>(operation, callback).execute(context);
     }

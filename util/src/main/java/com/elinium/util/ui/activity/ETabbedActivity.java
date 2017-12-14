@@ -1,5 +1,6 @@
 package com.elinium.util.ui.activity;
 
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.elinium.mvc.BaseOperation;
 import com.elinium.util.R;
 import com.elinium.util.broadcast.BroadcastListener;
 import com.elinium.util.exceptionhandling.ExceptionHandler;
@@ -28,8 +30,13 @@ import com.elinium.util.ui.layout.TabbedLayout;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by amiri on 10/2/2017.
@@ -328,5 +335,27 @@ public abstract class ETabbedActivity extends AppCompatActivity implements Excep
                 }
             }
         }
+    }
+
+    public <T> void DoAsync(BaseOperation.AsyncOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+        DoAsync(null, operation, callback);
+    }
+
+    public <T> void DoAsync(Context context, BaseOperation.AsyncOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+        Single.fromCallable(new Callable<T>() {
+            @Override
+            public T call() {
+                return operation.Do(context);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<T>() {
+                    @Override
+                    public void accept(T obj) throws Exception {
+                        callback.onDone(obj, null);
+                    }
+                }, throwable -> {
+                    callback.onDone(null, throwable);
+                });
     }
 }
