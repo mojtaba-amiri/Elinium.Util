@@ -1,6 +1,7 @@
 # Android Utility 
 
-## Note: I have not finalized the code in dev branch since it needs cleaning, but EActivity, EFragment and ETabbedActivity are good enough to use. 
+## Note
+I have not finalized the code in dev branch since it needs cleaning, but EActivity, EFragment and ETabbedActivity are being used in a real app and so far seem really handy. 
 
 
 This is one small project to put some useful classes and tools and share it with others. Right now it includes:
