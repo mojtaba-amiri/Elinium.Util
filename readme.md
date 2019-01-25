@@ -1,6 +1,6 @@
 # Android Utility 
 
-##Note: I have not finalized the code in dev branch since it needs cleaning, but EActivity, EFragment and ETabbedActivity are good enough to use. 
+## Note: I have not finalized the code in dev branch since it needs cleaning, but EActivity, EFragment and ETabbedActivity are good enough to use. 
 
 
 This is one small project to put some useful classes and tools and share it with others. Right now it includes:
@@ -14,9 +14,11 @@ public class SampleItem extends BaseItem<BaseViewHolder>
 ```
  good point is you don't need to define ViewHolders. demo app has an example on how to use it. 
 
-- ## EActivity : a base activity that handles layout initialization using annotation. you can specify options like fullscreen, noTitle, transparent in @layout annotation. 
+- ## EActivity
+ a base activity that handles layout initialization using annotation. you can specify options like fullscreen, noTitle, transparent in @layout annotation. 
 
-- ## EFragment : a base fragment that is ViewModel-aware and also handles layout init using annotation.
+- ## EFragment 
+a base fragment that is ViewModel-aware and also handles layout init using annotation.
 
  
 - ## Get rid of register/unregister receivers. Use @OnBroadcastReceived 
