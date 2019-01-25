@@ -4,12 +4,10 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.ArrayMap;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,8 +20,8 @@ import java.util.Map;
 public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements IItemObserver {
     private List<BaseItem> items;
     private Map<Integer, BaseItem> itemLayouts;
-    private Map<Long, Integer> groupFirstPositions;
-    private Map<Long, Integer> groupLastPositions;
+//    private Map<Long, Integer> groupFirstPositions;
+//    private Map<Long, Integer> groupLastPositions;
 
     private class Ascending implements Comparator<BaseItem> {
         @Override
@@ -68,8 +66,6 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public BaseAdapter() {
         items = new ArrayList<>();
         itemLayouts = new ArrayMap<>();
-        groupFirstPositions = new ArrayMap<>();
-        groupLastPositions = new ArrayMap<>();
 
     }
 
@@ -118,7 +114,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         return items != null ? items.size() : 0;
     }
 
-    public <T extends BaseItem> ArrayList<T> getAllItemsByType(Class<? extends BaseItem> itemClass) {
+    public <T extends BaseItem> ArrayList<T> getAllItemsByType(Class<T> itemClass) {
         ArrayList<T> tempItems = new ArrayList<>();
         for (BaseItem item : items) {
             if (itemClass.isInstance(item)) {
@@ -163,56 +159,35 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         items.add(item);
         addToItemLayouts(item);
         notifyItemInserted(itemCountBefore);
-        updateGroupPositions();//updateFirstAndLastGroupPositions(item);
+        //updateGroupPositions();//updateFirstAndLastGroupPositions(item);
     }
 
-    public void addOrUpdate(BaseItem item) {
-        for (int i = 0; i < getItemCount(); i++) {
-            if (items.get(i).getClass().equals(item.getClass()) &&
-                    items.get(i).getGroupId() == item.getGroupId() &&
-                    items.get(i).getDataItemId() == item.getDataItemId()) {
-                items.get(i).data = item.getDataItem();
-                notifyItemChanged(i);
+    public void addOrUpdate(BaseItem item, String payLoad) {
+        int position = updateIfExist(item, payLoad);
+        if (position < 0) add(item);//if not exist add it.
+    }
+
+    public void addOrUpdateToTopOfGroup(BaseItem item, long groupId, String payLoad) {
+        if (updateIfExist(item, payLoad) < 0) {
+            int firstPosition = getFirstOf(groupId);
+            if (firstPosition >= 0) {
+                addItemAtPosition(item, firstPosition);
+            } else {
+                addItemToEnd(item);
             }
         }
-        if (item.getGroupId() == 0) {
-            Log.e("BASEADAPTER", "OOPS");
-        }
-
-        add(item);
     }
 
-    public void addToTopOfGroup(BaseItem item, long groupId) {
-        int firstPosition = groupFirstPositions.get(groupId) == null ? updateFirstPositionForGroupId(groupId) : groupFirstPositions.get(groupId);
-        if (firstPosition >= 0) {
-            addItemAtPosition(item, firstPosition);
-        } else {
-            addItemToEnd(item);
+    public void addOrUpdateToBottomOfGroup(BaseItem item, long groupId, Object payLoad) {
+        if (updateIfExist(item, payLoad) < 0) {
+            int lastPosition = getLastOf(groupId);
+            if (lastPosition >= 0) {
+                lastPosition++;
+                addItemAtPosition(item, lastPosition);
+            } else {
+                addItemToEnd(item);
+            }
         }
-        if (item.getGroupId() == groupId)
-            groupFirstPositions.put(groupId, firstPosition);
-        else
-            updateFirstPositionForGroupId(item.getGroupId());
-    }
-
-    public void addToBottomOfGroup(BaseItem item, long groupId) {
-        int lastPosition = groupLastPositions.get(groupId) == null ? updateLastPositionForGroupId(groupId) : groupLastPositions.get(groupId);
-        if (lastPosition >= 0) {
-            lastPosition++;
-            addItemAtPosition(item, lastPosition);
-        } else {
-            addItemToEnd(item);
-            lastPosition = getItemCount();
-        }
-
-        if (item.getGroupId() == 0) {
-            Log.e("BASEADAPTER", "OOPS");
-        }
-
-        if (item.getGroupId() == groupId)
-            groupLastPositions.put(groupId, lastPosition);
-        else
-            updateLastPositionForGroupId(item.getGroupId());
     }
 
     public void addBatch(List<? extends BaseItem> items) {
@@ -224,7 +199,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
         this.items.addAll(items);
         addToItemLayouts(items);
-        updateGroupPositions();//updateFirstAndLastGroupPositions(items);
+        //updateGroupPositions();//updateFirstAndLastGroupPositions(items);
     }
 
     public void addBatchWithoutDispatch(List<BaseItem> items) {
@@ -233,7 +208,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         }
         this.items.addAll(items);
         addToItemLayouts(items);
-        updateGroupPositions();//updateFirstAndLastGroupPositions(items);
+        //updateGroupPositions();//updateFirstAndLastGroupPositions(items);
     }
 
     public void addBatchAtIndex(List<BaseItem> items, int index) {
@@ -243,7 +218,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         this.items.addAll(index, items);
         addToItemLayouts(items);
         diffResult.dispatchUpdatesTo(this);
-        updateGroupPositions();//updateFirstAndLastGroupPositions(items);
+        //updateGroupPositions();//updateFirstAndLastGroupPositions(items);
     }
 
     public void addItemToEnd(BaseItem item) {
@@ -254,7 +229,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         //int currentCount = getItemCountOf(item.getClass());
         notifyItemInserted(position);
         notifyItemRangeChanged(position, getItemCount());
-        updateGroupPositions();
+        //updateGroupPositions();
         //updateFirstAndLastGroupPositions(item);
     }
 
@@ -271,7 +246,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         addToItemLayouts(item);
         notifyItemInserted(maxPosition);
         notifyItemRangeChanged(maxPosition, getItemCount());
-        updateGroupPositions();//updateFirstAndLastGroupPositions(item);
+        //updateGroupPositions();//updateFirstAndLastGroupPositions(item);
     }
 
     public void addItemAfter(BaseItem item, BaseItem afterItem) {
@@ -287,7 +262,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         addToItemLayouts(item);
         notifyItemInserted(maxPosition);
         notifyItemRangeChanged(maxPosition, getItemCount());
-        updateGroupPositions();//updateFirstAndLastGroupPositions(item);
+        //updateGroupPositions();//updateFirstAndLastGroupPositions(item);
     }
 
     public void addItemAtPosition(BaseItem item, int position) {
@@ -295,7 +270,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         position = position < 0 ? 0 : (position > cnt) ? cnt : position;
         item.setItemObserver(this);
         items.add(position, item);
-        updateGroupPositions();//updateFirstAndLastGroupPositions(item);
+        //updateGroupPositions();//updateFirstAndLastGroupPositions(item);
         addToItemLayouts(item);
         int currentCount = getItemCountOf(item.getClass());
         notifyItemInserted(position);
@@ -305,25 +280,25 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     //endregion
 
     //region update First And Last Group Positions
-    private int updateFirstPositionForGroupId(long groupId) {
-        int min = -1;
-        for (int i = getItemCount() - 1; i >= 0; i--) {
-            if (items.get(i).getGroupId() == groupId) min = i;
-        }
-        groupFirstPositions.put(groupId, min);
-        Log.w("BaseAdapter", "group " + groupId + " first index: " + min);
-        return min;
-    }
-
-    public int updateLastPositionForGroupId(long groupId) {
-        int max = -1;
-        for (int i = 0; i < getItemCount(); i++) {
-            if (items.get(i).getGroupId() == groupId) max = i;
-        }
-        groupLastPositions.put(groupId, max);
-        Log.w("BaseAdapter", "group " + groupId + " last index: " + max);
-        return max;
-    }
+//    private int updateFirstPositionForGroupId(long groupId) {
+//        int min = -1;
+//        for (int i = getItemCount() - 1; i >= 0; i--) {
+//            if (items.get(i).getGroupId() == groupId) min = i;
+//        }
+//        if (min >= 0) groupFirstPositions.put(groupId, min);
+//        Log.w("BaseAdapter", "group " + groupId + " first index: " + min);
+//        return min;
+//    }
+//
+//    public int updateLastPositionForGroupId(long groupId) {
+//        int max = -1;
+//        for (int i = 0; i < getItemCount(); i++) {
+//            if (items.get(i).getGroupId() == groupId) max = i;
+//        }
+//        if (max >= 0) groupLastPositions.put(groupId, max);
+//        Log.w("BaseAdapter", "group " + groupId + " last index: " + max);
+//        return max;
+//    }
 //
 //    private void updateFirstAndLastGroupPositions(List<? extends BaseItem> items) {
 //        List<Long> groups = new ArrayList<>();
@@ -347,14 +322,17 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 //        updateFirstAndLastGroupPositions(item.getGroupId());
 //    }
 
-    private void updateGroupPositions() {
-        for (long groupId : groupFirstPositions.keySet()) updateFirstAndLastGroupPositions(groupId);
-    }
+//    private void updateGroupPositions() {
+//        for (long groupId : groupFirstPositions.keySet()) updateFirstAndLastGroupPositions(groupId);
+//    }
 
-    private void updateFirstAndLastGroupPositions(long group) {
-        updateLastPositionForGroupId(group);
-        updateFirstPositionForGroupId(group);
-    }
+//    private void updateFirstAndLastGroupPositions(long group) {
+////        groupFirstPositions.remove(group);
+////        groupLastPositions.remove(group);
+//
+//        updateLastPositionForGroupId(group);
+//        updateFirstPositionForGroupId(group);
+//    }
     //endregion
 
     //region Remove Item Functions
@@ -364,29 +342,56 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     public void removeItemByGroupId(long group, long id) {
         int position = -1;
-        int first = 0;
-        if (groupFirstPositions.get(group) != null) first = groupFirstPositions.get(group);
-        int last = 0;
-        if (groupLastPositions.get(group) != null) last = groupLastPositions.get(group);
-        for (int i = first; i <= last; i++) {
-            if (items.get(i).getDataItemId() == id) {
-                position = i;
-                break;
+        //if (groupFirstPositions.get(group) != null) first = groupFirstPositions.get(group);
+        int last = items.size() - 1;
+        //if (groupLastPositions.get(group) != null) last = groupLastPositions.get(group);
+        if (last >= 0)
+            for (int i = 0; i <= last; i++) {
+                if (items.get(i).getGroupId() == group && items.get(i).getDataItemId() == id) {
+                    position = i;
+                    break;
+                }
             }
-        }
         if (position >= 0) removeItemAtPosition(position, true);
     }
 
     public void removeAllByGroupId(long group) {
-        int first = -1;
-        if (groupFirstPositions.get(group) != null) first = groupFirstPositions.get(group);
-        int last = -1;
-        if (groupLastPositions.get(group) != null) last = groupLastPositions.get(group);
-        if (first >= 0 && last >= 0) {
-            for (int i = first; i <= last; i++) {
-                if (items.get(i).getGroupId() == group) removeItemAtPosition(i, true);
+        //if (groupFirstPositions.get(group) != null) first = groupFirstPositions.get(group);
+        int last = items.size() - 1;
+        //if (groupLastPositions.get(group) != null) last = groupLastPositions.get(group);
+
+        List<BaseItem> tempItems = new ArrayList<>();
+        List<Long> groups = new ArrayList<>();
+        BaseItem deletedInstance = null;
+       if (last >= 0) {
+           BaseItem item;
+           for (int i = 0; i <= last; i++) {
+                item = items.get(i);
+
+                if (item.getGroupId() != group)
+                    tempItems.add(items.get(i));
+                else {
+                    if (!groups.contains(item.getGroupId())) groups.add(item.getGroupId());
+                    if (deletedInstance == null) deletedInstance = item;
+                }
+                //removeItemAtPosition(i, true);
             }
         }
+
+        if (tempItems.size() != items.size()) {
+            BaseItemDiffCallback callback = new BaseItemDiffCallback(this.items, tempItems);
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback);
+            //typeCount.delete(itemHash);
+            diffResult.dispatchUpdatesTo(this);
+            items.clear();
+            items.addAll(tempItems);
+            if (deletedInstance != null) removeFromItemLayouts(deletedInstance);
+        }
+
+        //updateGroupPositions();//updateFirstAndLastOfGroups(groups);
+
+
+        //updateGroupPositions();
     }
 
 
@@ -403,7 +408,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         items.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
-        updateGroupPositions();//updateFirstAndLastGroupPositions(group);
+        //updateGroupPositions();//updateFirstAndLastGroupPositions(group);
     }
 
     public void removeAllItemsByType(Class<? extends BaseItem> itemClass) {
@@ -431,7 +436,35 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             if (deletedInstance != null) removeFromItemLayouts(deletedInstance);
         }
 
-        updateGroupPositions();//updateFirstAndLastOfGroups(groups);
+        //updateGroupPositions();//updateFirstAndLastOfGroups(groups);
+    }
+
+    public void removeAllItemsByTypeAndGroup(Class<? extends BaseItem> itemClass, Long group) {
+        if (getItemCountOf(itemClass) == 0) return;
+
+        List<BaseItem> tempItems = new ArrayList<>();
+        List<Long> groups = new ArrayList<>();
+        BaseItem deletedInstance = null;
+        for (BaseItem item : items) {
+            if ((itemClass.isInstance(item) && item.getGroupId() == group)) {
+                if (!groups.contains(item.getGroupId())) groups.add(item.getGroupId());
+                if (deletedInstance == null) deletedInstance = item;
+            } else {
+                tempItems.add(item);
+            }
+        }
+
+        if (tempItems.size() != items.size()) {
+            BaseItemDiffCallback callback = new BaseItemDiffCallback(this.items, tempItems);
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback);
+            //typeCount.delete(itemHash);
+            diffResult.dispatchUpdatesTo(this);
+            items.clear();
+            items.addAll(tempItems);
+            if (deletedInstance != null) removeFromItemLayouts(deletedInstance);
+        }
+
+        //updateGroupPositions();//updateFirstAndLastOfGroups(groups);
     }
 
     public void removeAll() {
@@ -440,11 +473,79 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         }
         items.clear();
         itemLayouts = new ArrayMap<>();
-        groupFirstPositions.clear();
-        groupLastPositions.clear();
+//        groupFirstPositions.clear();
+//        groupLastPositions.clear();
         notifyDataSetChanged();
     }
     //endregion
+
+    public int getPositionOf(long groupId, long id) {
+        int position = -1;
+        int first = getFirstOf(groupId);
+        int last = getLastOf(groupId);
+        if (first >= 0 && last >= 0) {
+            for (int i = first; i <= last; i++) {
+                BaseItem item = items.get(i);
+                if (item.getGroupId() == groupId && item.getDataItemId() == id) {
+                    position = i;
+                    break;
+                }
+            }
+        }
+        return position;
+    }
+
+    public int getPositionOf(BaseItem item) {
+        int position = -1;
+        long group = item.getGroupId();
+        int first = getFirstOf(group);
+        int last = getLastOf(group);
+        if (first >= 0 && last >= 0) {
+            for (int i = first; i <= last; i++) {
+                if (items.get(i).equals(item)) {
+                    position = i;
+                    break;
+                }
+            }
+        }
+        return position;
+    }
+
+    private int updateIfExist(BaseItem item, Object payload) {
+        int position = getPositionOf(item);
+        if (position >= 0) {
+            items.get(position).data = item.getDataItem();
+            // notifyItemChanged(position);
+            notifyItemChanged(position, payload);
+        }
+        //if (item.getGroupId() == 0) {
+        Log.d("BASE_ADAPTER", "position of item.id " + item.getDataItemId() + " is " + position);
+        //}
+        return position;
+    }
+
+    private int getFirstOf(long groupId) {
+        int last = items.size() - 1;
+        if (last >= 0) {
+            for (int i = 0; i <= last; i++) {
+                if (items.get(i).getGroupId() == groupId) return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private int getLastOf(long groupId) {
+        int last = items.size() - 1;
+        if (last >= 0) {
+            for (int i = last; i >= 0; i--) {
+                if (items.get(i).getGroupId() == groupId) return i;
+            }
+        }
+
+        Log.d("BASE_ADAPTER", " last of groupid " + groupId + " is " + last);
+        return last;
+    }
 
     public void replaceAllItems(List<BaseItem> newItems) {
 //        items = new ArrayList<>(newItems);
@@ -456,6 +557,12 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 //        notifyDataSetChanged();
         removeAll();
         addBatch(newItems);
+    }
+
+    public int getGroupCount(long group) {
+        int cnt = 0;
+        for (BaseItem item : items) if (item.getGroupId() == group) cnt++;
+        return cnt;
     }
 
     @Override
@@ -485,7 +592,7 @@ public class BaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         super.onViewAttachedToWindow(holder);
         if (holder instanceof BaseViewHolder) {
             Log.d("BaseAdapter", "Clear Animation");
-            ((BaseViewHolder) holder).itemView.clearAnimation();
+            //((BaseViewHolder) holder).itemView.clearAnimation();
         }
     }
 

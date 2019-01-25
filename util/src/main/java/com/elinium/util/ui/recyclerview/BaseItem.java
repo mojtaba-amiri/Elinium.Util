@@ -85,8 +85,7 @@ public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
                 public void onClick(View view) {
                     try {
                         onItemClicked.onItemClicked(view, data, viewHolder.getAdapterPosition());
-                    }
-                    catch (Exception e){
+                    } catch (Exception e) {
                         Log.e(TAG, "BaseItem.OnClickListener error: " + e.getMessage());
                     }
                 }
@@ -109,5 +108,14 @@ public abstract class BaseItem<T extends BaseViewHolder, DATA_TYPE> {
     }
 
     public void unbindView(T viewHolder) {
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != getClass()) return false;
+        BaseItem objItem = (BaseItem) obj;
+        if (objItem.getGroupId() != getGroupId()) return false;
+        if (objItem.getDataItemId() != getDataItemId()) return false;
+        return true;
     }
 }

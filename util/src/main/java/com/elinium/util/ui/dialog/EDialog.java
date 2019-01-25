@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
 
 public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
     protected INPUT_TYPE dialogInput;
-    OnDialogResult callback;
+    private OnDialogResult<OUTPUT_TYPE> callback;
 
     public interface OnDialogResult<OUTPUT> {
         void onDialogResult(OUTPUT output);
@@ -43,7 +43,7 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
         callback = resultCallback;
     }
 
-    public void returnResult(OUTPUT_TYPE output) {
+    protected void returnResult(OUTPUT_TYPE output) {
         if (callback != null) callback.onDialogResult(output);
         dismiss();
     }
@@ -51,6 +51,7 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         try {
             Layout layout = getLayout();
             if (layout.windowFeature() >= 0) {
@@ -71,13 +72,15 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
 
             }
 
+            setCancelable(layout.cancelable());
+            setCanceledOnTouchOutside(layout.cancelable());
+
             setContentView(getLayoutId());
             ButterKnife.bind(this);
         } catch (Exception e) {
             Log.e("EDialog", "onCreate:" + e.getMessage());
         }
     }
-
 
     private Layout getLayout() throws Exception {
         Layout layout = getClass().getAnnotation(Layout.class);
@@ -98,5 +101,6 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
         }
         return 0;
     }
+
 
 }

@@ -22,7 +22,7 @@ public class Convert {
         return localToGMT(new Date(time));
     }
 
-    public static Date gmtToLocalDate(long time) {
+        public static Date gmtToLocalDate(long time) {
         return gmtToLocalDate(new Date(time));
     }
 

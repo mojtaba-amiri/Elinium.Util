@@ -1,9 +1,12 @@
 package com.elinium.util.ui.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Window;
@@ -18,6 +21,7 @@ import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -38,7 +42,7 @@ public abstract class EActivity extends AppCompatActivity implements ExceptionHa
         broadcastListener.addLocalAnnotatedAction(action, methodName);
     }
 
-    public void registerReceivers(){
+    public void registerReceivers() {
         if (!broadcastListener.isLifecycleObserverInit()) broadcastListener.registerReceivers();
     }
 
@@ -120,12 +124,11 @@ public abstract class EActivity extends AppCompatActivity implements ExceptionHa
         onUnhandledException(threadName, throwable);
     }
 
-    public <T> void DoAsync(BaseOperation.AsyncOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
-        DoAsync(null, operation, callback);
+    public <T> void callAndBack(BaseOperation.AsyncContextOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+        callAndBack(null, operation, callback);
     }
 
-
-    public <T> void DoAsync(Context context, BaseOperation.AsyncOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+    public <T> void callAndBack(Context context, BaseOperation.AsyncContextOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
         Single.fromCallable(new Callable<T>() {
             @Override
             public T call() {
@@ -143,6 +146,41 @@ public abstract class EActivity extends AppCompatActivity implements ExceptionHa
                 });
     }
 
+    public <T> void callAndBack(Callable<T> operation, Consumer<T> callback, Consumer<Throwable> onError) {
+        Single.fromCallable(operation).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(callback, onError);
+        // callAndBack(null, operation, callback);
+    }
 
     public abstract void onUnhandledException(String threadName, Throwable throwable);
+
+    public android.app.FragmentTransaction addFragment(int container, Object fragment) {
+        return getFragmentManager().beginTransaction().add(container, (Fragment) fragment);
+    }
+
+    public FragmentTransaction addSupportFragment(int container, android.support.v4.app.Fragment fragment) {
+        return getSupportFragmentManager().beginTransaction().add(container, fragment);
+    }
+
+    public android.app.FragmentTransaction replaceFragment(int container, Fragment fragment) {
+        return getFragmentManager().beginTransaction().replace(container, fragment);
+    }
+
+    public FragmentTransaction replaceSupportFragment(int container, android.support.v4.app.Fragment fragment) {
+        return getSupportFragmentManager().beginTransaction().replace(container, fragment);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Use getSupportFragmentManager() to support older devices
+        FragmentManager fragmentManager = getFragmentManager();
+        android.support.v4.app.FragmentManager supportManager = getSupportFragmentManager();
+        if (fragmentManager != null && fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStackImmediate();
+        } else if (supportManager != null && supportManager.getBackStackEntryCount() > 0) {
+            supportManager.popBackStackImmediate();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

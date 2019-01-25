@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 
 public class BaseOperation<T> extends AsyncTask<Context, T, T> {
     private OperationCallback<T> callback;
-    private AsyncOperation<T> operation;
+    private AsyncContextOperation<T> operation;
 
     private Throwable throwable;
 
@@ -21,17 +21,21 @@ public class BaseOperation<T> extends AsyncTask<Context, T, T> {
         this.callback = callback;
     }
 
-    public void setOperation(AsyncOperation<T> operation) {
+    public void setOperation(AsyncContextOperation<T> operation) {
         this.operation = operation;
     }
 
-    public BaseOperation(AsyncOperation<T> operation, OperationCallback callback) {
+    public BaseOperation(AsyncContextOperation<T> operation, OperationCallback callback) {
         this.callback = callback;
         this.operation = operation;
     }
 
-    public interface AsyncOperation<T> {
+    public interface AsyncContextOperation<T> {
         T Do(Context context);
+    }
+
+    public interface AsyncOperation<T> {
+        T Do();
     }
 
     public interface OperationCallback<T> {

@@ -33,7 +33,7 @@ public abstract class BaseController<T> implements DefaultLifecycleObserver {
         }
     }
 
-    public void Do(Context context, BaseOperation.AsyncOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+    public void Do(Context context, BaseOperation.AsyncContextOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
         if (getInstance() == null) {
             Log.e(TAG, "You must first register controller");
             return;
@@ -41,7 +41,7 @@ public abstract class BaseController<T> implements DefaultLifecycleObserver {
         new BaseOperation<>(operation, callback).execute(context);
     }
 
-    public <T> void Do(BaseOperation.AsyncOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+    public <T> void Do(BaseOperation.AsyncContextOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
         if (getInstance() == null) {
             Log.e(TAG, "You must first register controller");
             return;

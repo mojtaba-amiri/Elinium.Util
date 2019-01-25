@@ -24,5 +24,5 @@ public @interface Layout {
 
     boolean fullScreen() default false;
 
-
+    boolean cancelable() default true;
 }
