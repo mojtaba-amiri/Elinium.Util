@@ -1,2 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.elinium.util" />
+    package="com.elinium.util">
+
+    <application>
+        <service
+            android:name="com.elinium.repository.synchronization.SynchronizerJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>
