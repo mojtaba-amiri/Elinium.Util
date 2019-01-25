@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 
 @Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Layout {
     @LayoutRes int id() default 0;
 
@@ -24,5 +24,5 @@ public @interface Layout {
 
     boolean fullScreen() default false;
 
-
+    boolean cancelable() default true;
 }

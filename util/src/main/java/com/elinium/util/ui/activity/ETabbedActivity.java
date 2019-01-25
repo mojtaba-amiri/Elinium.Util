@@ -1,5 +1,6 @@
 package com.elinium.util.ui.activity;
 
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.AsyncLayoutInflater;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.elinium.mvc.BaseOperation;
 import com.elinium.util.R;
 import com.elinium.util.broadcast.BroadcastListener;
 import com.elinium.util.exceptionhandling.ExceptionHandler;
@@ -28,8 +31,13 @@ import com.elinium.util.ui.layout.TabbedLayout;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by amiri on 10/2/2017.
@@ -142,29 +150,22 @@ public abstract class ETabbedActivity extends AppCompatActivity implements Excep
             viewPager.setAdapter(fragmentPagerAdapter);
 
             tabLayout.setupWithViewPager(viewPager);
+
+
+            // tabLayout.getTabAt(0).setIcon()
+            //  getSupportActionBar().hide();
+
+            //Log.e(TAG,"onStart Inflate.");
             for (int i = 0; i < tabLayout.getTabCount(); i++) {
                 try {
-                    if (fragments.get(i) == null) {
-                        ETabFragment fragment = ((getLayout().fragments()[i])).newInstance();
-                        fragment.setArguments(getInitialBundleFor((getLayout().fragments()[i])));
-                        fragments.setValueAt(i, fragment);
-                    }
                     View view1 = getLayoutInflater().inflate(R.layout.custom_tab, null);
                     view1.findViewById(R.id.imgIcon).setBackgroundResource(fragments.get(i).getTabIcon());
                     tabLayout.getTabAt(i).setCustomView(view1);
-                    //tabLayout.getTabAt(i).setIcon(fragments.get(i).getTabIcon());
-                    //tabLayout.getTabAt(i).setText(fragments.get(i).getTabTitle());
-//                    for (int i = 0; i < tabLayout.getTabAt(1).getChildCount(); i++)
-//                    {
-//                        tablayout.getTabWidget().getChildAt(i).setPadding(10,10,10,10);
-//                    }
                 } catch (Exception e) {
                     Log.e(TAG, "set TabIcons Error:" + e.getMessage());
                 }
             }
-
-            // tabLayout.getTabAt(0).setIcon()
-            //  getSupportActionBar().hide();
+            //Log.e(TAG,"onStart Inflate end.");
 
             if (layout.transparent()) {
                 getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -195,6 +196,11 @@ public abstract class ETabbedActivity extends AppCompatActivity implements Excep
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
     private TabbedLayout getLayout() throws Exception {
         TabbedLayout layout = getClass().getAnnotation(TabbedLayout.class);
         if (layout != null) {
@@ -223,6 +229,7 @@ public abstract class ETabbedActivity extends AppCompatActivity implements Excep
     protected void onPageSelected(int position) {
         if (getSupportActionBar() != null && fragments.get(position) != null)
             getSupportActionBar().setTitle(fragments.get(position).getTabTitle());
+
     }
 
     protected void onPageScrollStateChanged(int state) {
@@ -328,5 +335,27 @@ public abstract class ETabbedActivity extends AppCompatActivity implements Excep
                 }
             }
         }
+    }
+
+    public <T> void callAndBack(BaseOperation.AsyncContextOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+        callAndBack(null, operation, callback);
+    }
+
+    public <T> void callAndBack(Context context, BaseOperation.AsyncContextOperation<T> operation, BaseOperation.OperationCallback<T> callback) {
+        Single.fromCallable(new Callable<T>() {
+            @Override
+            public T call() {
+                return operation.Do(context);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<T>() {
+                    @Override
+                    public void accept(T obj) throws Exception {
+                        callback.onDone(obj, null);
+                    }
+                }, throwable -> {
+                    callback.onDone(null, throwable);
+                });
     }
 }

@@ -17,8 +17,8 @@ import butterknife.ButterKnife;
  */
 
 public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
-    INPUT_TYPE dialogInput;
-    OnDialogResult callback;
+    protected INPUT_TYPE dialogInput;
+    private OnDialogResult<OUTPUT_TYPE> callback;
 
     public interface OnDialogResult<OUTPUT> {
         void onDialogResult(OUTPUT output);
@@ -30,7 +30,15 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
     }
 
     public EDialog(Context context, INPUT_TYPE input, OnDialogResult<OUTPUT_TYPE> resultCallback) {
+        // android.R.style.Theme_Black_NoTitleBar_Fullscreen
         super(context);
+        dialogInput = input;
+        callback = resultCallback;
+    }
+
+    public EDialog(Context context, INPUT_TYPE input, boolean fullScreen, OnDialogResult<OUTPUT_TYPE> resultCallback) {
+        // android.R.style.Theme_Black_NoTitleBar_Fullscreen
+        super(context, fullScreen ? android.R.style.Theme_Black_NoTitleBar_Fullscreen : 0);
         dialogInput = input;
         callback = resultCallback;
     }
@@ -43,6 +51,7 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         try {
             Layout layout = getLayout();
             if (layout.windowFeature() >= 0) {
@@ -59,7 +68,12 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
 
             if (layout.fullScreen()) {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+
             }
+
+            setCancelable(layout.cancelable());
+            setCanceledOnTouchOutside(layout.cancelable());
 
             setContentView(getLayoutId());
             ButterKnife.bind(this);
@@ -67,6 +81,7 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
             Log.e("EDialog", "onCreate:" + e.getMessage());
         }
     }
+
 
     private Layout getLayout() throws Exception {
         Layout layout = getClass().getAnnotation(Layout.class);
@@ -87,5 +102,6 @@ public class EDialog<INPUT_TYPE, OUTPUT_TYPE> extends AppCompatDialog {
         }
         return 0;
     }
+
 
 }
